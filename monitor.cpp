@@ -6,7 +6,7 @@ using std::cout, std::flush;
 using std::this_thread::sleep_for;
 using std::chrono::seconds;
 
-// PURE FUNCTION: Checks whether vitals are OK
+
 enum VitalStatus {
   VITAL_OK,
   TEMP_CRITICAL,
@@ -27,7 +27,7 @@ VitalStatus checkVitals(float temperature, float pulseRate, float spo2) {
   return VITAL_OK;
 }
 
-// I/O FUNCTION: Alert animation
+
 void showAlert(const std::string& message) {
   cout << message << '\n';
   for (int i = 0; i < 6; i++) {
@@ -38,7 +38,7 @@ void showAlert(const std::string& message) {
   }
 }
 
-// MAIN FUNCTION: Orchestrates the above
+
 int vitalsOk(float temperature, float pulseRate, float spo2) {
   VitalStatus status = checkVitals(temperature, pulseRate, spo2);
   switch (status) {
