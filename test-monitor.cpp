@@ -1,7 +1,8 @@
-#include <gtest/gtest.h>
-#include "./monitor.h"
+#include <assert.h>
 
-TEST(Monitor, NotOkWhenAnyVitalIsOffRange) {
-  ASSERT_FALSE(vitalsOk(99, 102, 70));
-  ASSERT_TRUE(vitalsOk(98.1, 70, 98));
+void testVitalsChecker() {
+  assert(checkVitals(98.6, 75, 95) == VITAL_OK);
+  assert(checkVitals(103, 75, 95) == TEMP_CRITICAL);
+  assert(checkVitals(98.6, 50, 95) == PULSE_CRITICAL);
+  assert(checkVitals(98.6, 75, 85) == SPO2_CRITICAL);
 }
