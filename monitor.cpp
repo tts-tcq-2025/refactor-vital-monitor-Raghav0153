@@ -2,56 +2,54 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
-using std::cout, std::flush;
-using std::this_thread::sleep_for;
-using std::chrono::seconds;
-
-
-enum VitalStatus {
-  VITAL_OK,
-  TEMP_CRITICAL,
-  PULSE_CRITICAL,
-  SPO2_CRITICAL
-};
-
-VitalStatus checkVitals(float temperature, float pulseRate, float spo2) {
-  if (temperature > 102 || temperature < 95) {
-    return TEMP_CRITICAL;
+#include <string>
+ 
+using namespace std;
+using namespace std::chrono;
+ 
+void blinkingAlert() {
+  for (int i = 0; i < 6; ++i) {
+    cout << "\r* " << flush;
+    this_thread::sleep_for(seconds(1));
+    cout << "\r *" << flush;
+    this_thread::sleep_for(seconds(1));
   }
-  if (pulseRate < 60 || pulseRate > 100) {
-    return PULSE_CRITICAL;
-  }
-  if (spo2 < 90) {
-    return SPO2_CRITICAL;
-  }
+}
+ 
+VitalStatus evaluateVital(float value, const VitalLimits& limits) {
+  if (value < limits.lower) return VITAL_LOW;
+  if (value > limits.upper) return VITAL_HIGH;
   return VITAL_OK;
 }
-
-
-void showAlert(const std::string& message) {
-  cout << message << '\n';
-  for (int i = 0; i < 6; i++) {
-    cout << "\r* " << flush;
-    sleep_for(seconds(1));
-    cout << "\r *" << flush;
-    sleep_for(seconds(1));
-  }
+ 
+bool checkVital(const string& name, float value, const VitalLimits& limits) {
+  VitalStatus status = evaluateVital(value, limits);
+ 
+  if (status == VITAL_OK) return true;
+ 
+  const char* messages[] = {
+    "",                 
+    " is too low!\n",  
+    " is too high!\n"   
+  };
+ 
+  cout << name << messages[status];
+  blinkingAlert();
+  return false;
 }
-
-
-int vitalsOk(float temperature, float pulseRate, float spo2) {
-  VitalStatus status = checkVitals(temperature, pulseRate, spo2);
-  switch (status) {
-    case TEMP_CRITICAL:
-      showAlert("Temperature is critical!");
-      return 0;
-    case PULSE_CRITICAL:
-      showAlert("Pulse Rate is out of range!");
-      return 0;
-    case SPO2_CRITICAL:
-      showAlert("Oxygen Saturation out of range!");
-      return 0;
-    default:
-      return 1;
-  }
+ 
+bool checkTemperature(float temperature) {
+  return checkVital("Temperature", temperature, {95.0f, 102.0f});
+}
+ 
+bool checkPulseRate(float pulseRate) {
+  return checkVital("Pulse Rate", pulseRate, {60.0f, 100.0f});
+}
+ 
+bool checkSpo2(float spo2) {
+  return checkVital("Oxygen Saturation", spo2, {90.0f, 100.0f});
+}
+ 
+bool vitalsOk(float temperature, float pulseRate, float spo2) {
+  return checkTemperature(temperature) && checkPulseRate(pulseRate) && checkSpo2(spo2);
 }
