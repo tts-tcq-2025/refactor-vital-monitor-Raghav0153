@@ -35,7 +35,7 @@ vector<VitalCheckResult> checkVitals(float temperature, float pulseRate, float s
   return results;
 }
 
-// I/O FUNCTION: Alert animation
+
 void blinkingAlert() {
   for (int i = 0; i < 6; ++i) {
     cout << "\r* " << flush;
