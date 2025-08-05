@@ -1,7 +1,6 @@
-#include <gtest/gtest.h>
-#include "./monitor.h"
-
-TEST(Monitor, NotOkWhenAnyVitalIsOffRange) {
-  ASSERT_FALSE(vitalsOk(99, 102, 70));
-  ASSERT_TRUE(vitalsOk(98.1, 70, 98));
+void testEvaluateVital() {
+  assert(evaluateVital(98, {95, 102}) == VITAL_OK);
+  assert(evaluateVital(94, {95, 102}) == VITAL_LOW);
+  assert(evaluateVital(103, {95, 102}) == VITAL_HIGH);
 }
+
